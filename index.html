@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroSoil AI | Advanced Soil-Test Analyzer</title>
+    <style>
+        /* Modern Reset and Typography */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+        }
+
+        :root {
+            --primary: #15803d;
+            --primary-dark: #14532d;
+            --primary-light: #bbf7d0;
+            --secondary: #10b981;
+            --accent-amber: #d97706;
+            --accent-red: #dc2626;
+            --bg-main: #f4f7f5;
+            --surface: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+            --border: #e2e8f0;
+            
+            /* Element Specific Color Palette */
+            --nitro-blue: #2563eb;
+            --nitro-bg: #eff6ff;
+            --phos-orange: #ea580c;
+            --phos-bg: #fff5ed;
+            --potas-crimson: #be123c;
+            --potas-bg: #fff1f2;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Dynamic Navigation Wrapper */
+        nav {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-links button {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-links button:hover {
+            color: var(--primary);
+            background-color: #f0fdf4;
+        }
+
+        .nav-links button.active-nav {
+            color: var(--primary-dark);
+            background-color: var(--primary-light);
+        }
+
+        /* SPA App Section View Rules */
+        .app-page {
+            display: none;
+            animation: fadeInPage 0.4s ease forwards;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px 80px 24px;
+        }
+
+        .app-page.active-page {
+            display: block;
+        }
+
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ================= PAGE 1: HOME VISUALS ================= */
+        header {
+            background: linear-gradient(135deg, rgba(21, 128, 61, 0.08) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border-radius: 32px;
+            padding: 80px 32px;
+            text-align: center;
+            margin-bottom: 40px;
+            border: 1px solid rgba(21, 128, 61, 0.1);
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 12px;
+            letter-spacing: -1.5px;
+            line-height: 1.15;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 800;
+            margin-bottom: 40px;
+        }
+
+        .mission-box {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            border-left: 8px solid var(--primary);
+        }
+
+        .mission-box h2 {
+            color: var(--primary-dark);
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+
+        .mission-box p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
+        .features-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            padding: 35px 24px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.06);
+            border-color: var(--secondary);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            background: #f0fdf4;
+            width: 70px;
+            height: 70px;
+            line-height: 70px;
+            border-radius: 20px;
+        }
+
+        .feature-card[data-feature="nutrient"] .feature-icon { background: #eff6ff; }
+        .feature-card[data-feature="fertilizer"] .feature-icon { background: #fef3c7; }
+        .feature-card[data-feature="crop"] .feature-icon { background: #f0fdf4; }
+        .feature-card[data-feature="health"] .feature-icon { background: #faf5ff; }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .click-hint {
+            display: inline-block;
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* ================= PAGE 2: INTERACTIVE ANALYZER UI ================= */
+        .analyzer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .panel-box {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.02);
+        }
+
+        .panel-box h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--primary-dark);
+            border-bottom: 2px solid var(--bg-main);
+            padding-bottom: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .input-slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .slider-val {
+            font-family: monospace;
+            background: var(--bg-main);
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 10px 20px -5px rgba(21, 128, 61, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -5px rgba(21, 128, 61, 0.4);
+        }
+
+        .report-metric {
+            background: var(--bg-main);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--border);
+        }
+
+        .report-metric.level-low { border-left-color: var(--accent-red); background: #fef2f2; }
+        .report-metric.level-optimal { border-left-color: var(--secondary); background: #f0fdf4; }
+        .report-metric.level-high { border-left-color: var(--accent-amber); background: #fffbeb; }
+
+        .report-metric h4 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        /* Diagnostic Suggestion Badges */
+        .suggestion-section {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(0, 0, 0, 0.1);
+        }
+
+        .suggestion-badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+        .badge-tool { background: #e2e8f0; color: #334155; }
+        .badge-input { background: #dcfce7; color: #166534; }
+
+        /* ================= PAGE 3: SOIL EDUCATION HUB ================= */
+        .edu-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            border-radius: 24px;
+            padding: 50px;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin: 40px 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .edu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .edu-card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 35px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);
+            transition: transform 0.25s, border-color 0.25s;
+            cursor: pointer;
+        }
+
+        .edu-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .edu-card.link-card-n:hover { border-color: var(--nitro-blue); }
+        .edu-card.link-card-p:hover { border-color: var(--phos-orange); }
+        .edu-card.link-card-k:hover { border-color: var(--potas-crimson); }
+
+        .edu-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .badge-n { background: var(--nitro-bg); color: var(--nitro-blue); }
+        .badge-p { background: var(--phos-bg); color: var(--phos-orange); }
+        .badge-k { background: var(--potas-bg); color: var(--potas-crimson); }
+        .badge-struct { background: #f0fdf4; color: #166534; }
+        .badge-ph { background: #faf5ff; color: #6b21a8; }
+
+        .explore-link-btn {
+            display: inline-block;
+            margin-top: 20px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .link-n { color: var(--nitro-blue); }
+        .link-p { color: var(--phos-orange); }
+        .link-k { color: var(--potas-crimson); }
+
+        .ph-spectrum-bar {
+            background: linear-gradient(90deg, #ef4444 0%, #f59e0b 35%, #10b981 50%, #3b82f6 70%, #6366f1 100%);
+            height: 30px;
+            border-radius: 10px;
+            margin: 25px 0 15px 0;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .ph-marker-labels {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            padding: 0 5px;
+        }
+
+        .ph-info-panel {
+            background: #faf5ff;
+            border: 1px solid #e9d5ff;
+            border-radius: 14px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        /* ================= INDIVIDUAL ELEMENT PAGES STYLE ================= */
+        .element-hero {
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 32px;
+            color: var(--text-dark);
+            border-left: 8px solid;
+        }
+        .hero-n { background: var(--nitro-bg); border-color: var(--nitro-blue); }
+        .hero-p { background: var(--phos-bg); border-color: var(--phos-orange); }
+        .hero-k { background: var(--potas-bg); border-color: var(--potas-crimson); }
+
+        .back-to-hub-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+        .back-to-hub-btn:hover {
+            background: #f8fafc;
+        }
+
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .breakdown-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid var(--border);
+        }
+
+        .breakdown-card h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ================= MODAL & OVERLAYS ================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 24px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: translateY(0);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            font-size: 1.5rem;
+            background: var(--bg-main);
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+        }
+
+        .modal-section {
+            margin-bottom: 20px;
+        }
+
+        .modal-section h4 {
+            color: var(--primary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .email-box {
+            font-family: monospace;
+            background: var(--bg-main);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px dashed #cbd5e1;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        footer {
+            background-color: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 60px 24px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer-content h2 {
+            margin-bottom: 8px;
+            font-size: 1.5rem;
+        }
+
+        .team-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        .team-member {
+            background: #f0fdf4;
+            color: var(--primary);
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #dcfce7;
+        }
+
+        .team-member:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.3rem; }
+            .analyzer-grid { grid-template-columns: 1fr; }
+            .nav-container { flex-direction: column; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">AgroSoil AI</a>
+            <div class="nav-links">
+                <button class="nav-btn active-nav" onclick="switchPage('home')">Home Dashboard</button>
+                <button class="nav-btn" onclick="switchPage('analyzer')">Analyzer Tool</button>
+                <button class="nav-btn" onclick="switchPage('education')">Soil Education</button>
+            </div>
+        </div>
+    </nav>
+
+    <main id="homePage" class="app-page active-page">
+        <header>
+            <h1 class="hero-title">Predictive Agriculture Analytics</h1>
+            <p class="hero-subtitle">Harnessing AI for Crop Longevity</p>
+            
+            <div class="mission-box">
+                <h2>Our Global Agronomy Mission</h2>
+                <p>We empower active farmers with instantly deployable chemical insights, preventing downstream nutrient run-off, securing ecological topsoil structure integrity, and scientifically inflating localized yield capacity patterns.</p>
+            </div>
+        </header>
+
+        <section class="features-container">
+            <div class="feature-card" data-feature="nutrient" onclick="openModal('nutrient')">
+                <div class="feature-icon">🧪</div>
+                <h3>Macro-Nutrient Indexing</h3>
+                <p>Decodes localized topsoil element concentrations instantly to trace macro compounds.</p>
+                <span class="click-hint">Learn More →</span>
+            </div>
+            <div class="feature-card" data-feature="fertilizer" onclick="openModal('fertilizer')">
+                <div class="feature-icon">🌾</div>
+                <h3>Precision Prescriptions</h3>
+                <p>Minimizes operational costs by matching raw deficit profiles to target chemical applications.</p>
+                <span class="click-hint">Learn More →</span>
+            </div>
+            <div class="feature-card" data-feature="crop" onclick="openModal('crop')">
+                <div class="feature-icon">🌱</div>
+                <h3>Yield Strain Optimization</h3>
+                <p>Cross-references plant requirements with local environment properties for optimal success rates.</p>
+                <span class="click-hint">Learn More →</span>
+            </div>
+            <div class="feature-card" data-feature="health" onclick="openModal('health')">
+                <div class="feature-icon">📊</div>
+                <h3>Topsoil Trend Logging</h3>
+                <p>Monitors long-term land composition metrics across crop rotations over time.</p>
+                <span class="click-hint">Learn More →</span>
+            </div>
+        </section>
+    </main>
+
+    <main id="analyzerPage" class="app-page">
+        <div class="analyzer-grid">
+            <div class="panel-box">
+                <h2>Field Sample Metrics</h2>
+                <div class="form-group">
+                    <label>Soil pH Value</label>
+                    <div class="input-slider-wrapper">
+                        <input type="range" id="phInput" min="4.0" max="9.0" step="0.1" value="6.5" oninput="updateSliderLabel('ph', this.value)">
+                        <span class="slider-val" id="phVal">6.5</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Nitrogen Availability (N) - ppm</label>
+                    <div class="input-slider-wrapper">
+                        <input type="range" id="nInput" min="0" max="150" step="5" value="45" oninput="updateSliderLabel('n', this.value)">
+                        <span class="slider-val" id="nVal">45 ppm</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Phosphorus Density (P) - ppm</label>
+                    <div class="input-slider-wrapper">
+                        <input type="range" id="pInput" min="0" max="100" step="5" value="30" oninput="updateSliderLabel('p', this.value)">
+                        <span class="slider-val" id="pVal">30 ppm</span>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="executeSoilDiagnostics()">Compute Diagnostic Profile</button>
+            </div>
+
+            <div class="panel-box" id="resultsBox">
+                <h2>Diagnostic Report</h2>
+                <p style="color: var(--text-muted)">Adjust parameters and run diagnostic tracking models to output real-time data calculations alongside suggested field tools and amendment compounds.</p>
+            </div>
+        </div>
+    </main>
+
+    <main id="educationPage" class="app-page">
+        <div class="edu-hero">
+            <h2 style="font-size: 2.2rem; margin-bottom: 10px; font-weight: 800;">Topsoil Chemistry & Soil Composition Matrix</h2>
+            <p style="color: #94a3b8; font-size: 1.1rem;">Deepening agricultural awareness to maintain biological soil infrastructure balance and protect ecosystem longevity.</p>
+        </div>
+
+        <div class="section-title"><span>🧪</span> Primary Macronutrient Core (NPK)</div>
+        <p style="color: var(--text-muted); margin-bottom: 20px; max-width: 800px;">Click on any macronutrient profile below to open its dedicated specialized chemical mapping page.</p>
+        
+        <div class="edu-grid">
+            <div class="edu-card link-card-n" onclick="switchPage('nitrogen')">
+                <span class="edu-badge badge-n">Nitrogen [N]</span>
+                <h3 style="margin-bottom: 12px">Vegetative Growth Accelerator</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem">Controls plant protein structures, leaf canopy speed, and chlorophyll energy transformation loops.</p>
+                <button class="explore-link-btn link-n">Explore Nitrogen Matrix →</button>
+            </div>
+            <div class="edu-card link-card-p" onclick="switchPage('phosphorus')">
+                <span class="edu-badge badge-p">Phosphorus [P]</span>
+                <h3 style="margin-bottom: 12px">Root Architecture & Energy Flow</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem">Governs root tip cellular extension networks, nucleic acids, and dynamic seasonal flowering loops.</p>
+                <button class="explore-link-btn link-p">Explore Phosphorus Matrix →</button>
+            </div>
+            <div class="edu-card link-card-k" onclick="switchPage('potassium')">
+                <span class="edu-badge badge-k">Potassium [K]</span>
+                <h3 style="margin-bottom: 12px">Stomatal Control & Stress Buffer</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem">Controls fluid osmotic pressure dynamics and defense mechanisms against extreme weather stressors.</p>
+                <button class="explore-link-btn link-k">Explore Potassium Matrix →</button>
+            </div>
+        </div>
+
+        <div class="section-title"><span>📈</span> The Critical Impact of Soil pH</div>
+        <div class="panel-box" style="margin-bottom: 30px;">
+            <span class="edu-badge badge-ph">Chemical Variable</span>
+            <h3>Nutrient Bio-availability Index</h3>
+            <p style="color: var(--text-muted); margin-top: 5px;">Soil pH directly impacts chemical reactions in the dirt. Even with plenty of fertilizer, extreme acidity or alkalinity locks up minerals, preventing roots from absorbing them.</p>
+            
+            <div class="ph-spectrum-bar"></div>
+            <div class="ph-marker-labels">
+                <span>4.0 (Strong Acid)</span>
+                <span>5.5 (Slight Acid)</span>
+                <span>7.0 (Neutral)</span>
+                <span>8.5 (Alkaline)</span>
+            </div>
+
+            <div class="ph-info-panel">
+                <h4 style="color: #6b21a8; font-weight: 700; margin-bottom: 6px;">Key Diagnostic Guide:</h4>
+                <p style="color: #5b21b6; font-size: 0.95rem; line-height: 1.6;">
+                    <strong>Below 6.0 (Acidic):</strong> Phosphorus binds firmly with iron and aluminum oxides, rendering it unavailable. Alleviated via <em>Agricultural Lime</em>.<br>
+                    <strong>6.2 to 7.2 (Ideal Range):</strong> Peak microbial breakdown speed and clean solubility for all macronutrients.<br>
+                    <strong>Above 7.5 (Alkaline):</strong> Calcium binds up phosphorus, while micronutrients like Iron and Manganese become locked out. Solved with <em>Elemental Sulfur</em>.
+                </p>
+            </div>
+        </div>
+
+        <div class="section-title"><span>🌱</span> Soil Physical Properties & Salinity</div>
+        <div class="edu-grid">
+            <div class="edu-card">
+                <span class="edu-badge badge-struct">Texture Fractions</span>
+                <h3 style="margin-bottom: 12px">Sand, Silt, and Clay Ratios</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem">The balance of sand, silt, and clay determines water drainage and air pocket volume. High clay fields present premium ion capacities but lock roots via compaction, whereas highly sandy tracts drain nutrients away rapidly.</p>
+            </div>
+            <div class="edu-card">
+                <span class="edu-badge badge-struct">Organic Matter</span>
+                <h3 style="margin-bottom: 12px">Humus & Biological Activity</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem">Decomposed biological material forms humus, acting as an organic sponge. Increasing soil carbon content preserves microbial communities, optimizes soil sponge structure, and unlocks ambient natural nitrogen storage loops.</p>
+            </div>
+            <div class="edu-card">
+                <span class="edu-badge badge-struct">Salinity / EC</span>
+                <h3 style="margin-bottom: 12px">Electrical Conductivity Metrics</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem">Excessive salt levels raise the osmotic pressure around plant roots, effectively pulling moisture out of the plant. Monitoring EC helps avoid burning seedlings and prevents long-term topsoil sterilization.</p>
+            </div>
+        </div>
+    </main>
+
+    <main id="nitrogenPage" class="app-page">
+        <button class="back-to-hub-btn" onclick="switchPage('education')">&larr; Return to Education Hub</button>
+        <div class="element-hero hero-n">
+            <span class="edu-badge badge-n" style="background:#2563eb; color:white;">Atomic No. 7</span>
+            <h2 style="font-size: 2.2rem; font-weight:800; color: #1e3a8a;">Nitrogen [N] Deep-Dive</h2>
+            <p style="font-size: 1.1rem; color: #1e40af; margin-top: 4px;">The foundational builder of vegetative plant canopies and cellular proteins.</p>
+        </div>
+        
+        <div class="breakdown-grid">
+            <div class="breakdown-card">
+                <h4><span>🌱</span> Biological Engine Role</h4>
+                <p style="color: var(--text-muted); font-size:0.95rem;">Nitrogen forms the core of amino acids, nucleic acids, and the green chlorophyll molecules that harness solar radiation. Plants absorb it in mobile ionic formats: Nitrate (NO3-) and Ammonium (NH4+).</p>
+            </div>
+            <div class="breakdown-card">
+                <h4><span>⚠️</span> Deficiency Markers</h4>
+                <p style="color: var(--text-muted); font-size:0.95rem;">Because Nitrogen is highly mobile within plant tissue, old base leaves turn uniform pale-yellow first (chlorosis) as the plant pulls remaining reserves upward to save emerging tip growth.</p>
+            </div>
+            <div class="breakdown-card">
+                <h4><span>🔥</span> Toxicity Red Flags</h4>
+                <p style="color: var(--text-muted); font-size:0.95rem;">Excessive application causes abnormally dark green foliage, weak stalks prone to bending, delayed flowering, and a dangerous accumulation of free sugars that attract insect pests.</p>
+            </div>
+            <div class="breakdown-card">
+                <h4><span>🔧</span> Rectification Channels</h4>
+                <p style="color: var(--text-muted); font-size:0.95rem;"><strong>Synthetic:</strong> Urea or Ammonium Nitrate. <br><strong>Organic:</strong> Alfalfa meal, blood meal, or systematic planting of nitrogen-fixing legume cover crops like clover.</p>
+            </div>
+        </div>
+    </main>
+
+    <main id="phosphorusPage" class="app-page">
+        <button class="back-to-hub-btn" onclick="switchPage('education')">&larr; Return to Education Hub</button>
+        <div class="element-hero hero-p">
+            <span class="edu-badge badge-p" style="background:#ea580c; color:white;">Atomic No. 15</span>
+            <h2 style="font-size: 2.2rem; font-weight:800; color: #7c2d12;">Phosphorus [P] Deep-Dive</h2>
+            <p style="font-size: 1.1rem; color: #9a3412; margin-top: 4px;">The driver of intracellular metabolic transformations and primary root network branching.</p>
+        </div>
+
+        <div class="breakdown-grid">
+            <div class="breakdown-card">
+                <h4><span>⚡</span> Biological Engine Role</h4>
+                <p style="color: var(--text-muted); font-size:0.95rem;">Phosphorus forms the structural backbone of cellular energy transport molecules (ATP). It dictates structural cell divisions during initial root germination phases and triggers heavy seasonal flower formations.</p>
+            </div>
+            <div class="breakdown-card">
+                <h4><span>⚠️</span> Deficiency Markers</h4>
+                <p style="color: var(--text-muted); font-size:0.95rem;">P presents extreme immobility in cold soils. Signs include severely stunted root systems and a distinct dark purple or deep bronze coloration developing along the margins of old under-leaves.</p>
+            </div>
+            <div class="breakdown-card">
+                <h4><span>🔥</span> Toxicity Red Flags</h4>
+                <p style="color: var(--text-muted); font-size:0.95rem;">Excess phosphorus is rare but dangerous because it directly locks down micronutrient pathways, triggering induced deficiencies in Zinc, Iron, and Copper compounds.</p>
+            </div>
+            <div class="breakdown-card">
+                <h4><span>🔧</span> Rectification Channels</h4>
+                <p style="color: var(--text-muted); font-size:0.95rem;"><strong>Synthetic:</strong> Diammonium Phosphate (DAP) or Triple Superphosphate (TSP). <br><strong>Organic:</strong> Steamed bone meal, soft rock phosphate, or encouraging native mycorrhizal fungal colonization.</p>
+            </div>
+        </div>
+    </main>
+
+    <main id="potassiumPage" class="app-page">
+        <button class="back-to-hub-btn" onclick="switchPage('education')">&larr; Return to Education Hub</button>
+        <div class="element-hero hero-k">
+            <span class="edu-badge badge-k" style="background:#be123c; color:white;">Atomic No. 19</span>
+            <h2 style="font-size: 2.2rem; font-weight:800; color: #881337;">Potassium [K] Deep-Dive</h2>
+            <p style="font-size: 1.1rem; color: #9f1239; margin-top: 4px;">The osmotic water balance manager and structural plant vascular shield.</p>
+        </div>
+
+        <div class="breakdown-grid">
+            <div class="breakdown-card">
+                <h4><span>💧</span> Biological Engine Role</h4>
+                <p style="color: var(--text-muted); font-size:0.95rem;">Rather than building tissue, Potassium acts as an enzyme regulator. It drives the guard cells that open and close leaf pores (stomata), maintaining hydraulic turgor pressure and controlling drought transpiration rates.</p>
+            </div>
+            <div class="breakdown-card">
+                <h4><span>⚠️</span> Deficiency Markers</h4>
+                <p style="color: var(--text-muted); font-size:0.95rem;">Deficiencies show up as "marginal scorching." The outer borders of lower leaves turn bright yellow, then brown, and dry up completely while the inner center of the leaf stays green.</p>
+            </div>
+            <div class="breakdown-card">
+                <h4><span>🔥</span> Toxicity Red Flags</h4>
+                <p style="color: var(--text-muted); font-size:0.95rem;">High potassium raises substrate salt index parameters, blocking out the absorption of Magnesium and Calcium, causing tip burn across new foliage flushes.</p>
+            </div>
+            <div class="breakdown-card">
+                <h4><span>🔧</span> Rectification Channels</h4>
+                <p style="color: var(--text-muted); font-size:0.95rem;"><strong>Synthetic:</strong> Muriate of Potash (Potassium Chloride) or Potassium Sulfate. <br><strong>Organic:</strong> Hardwood ash applications, greensand deposits, or uncomposted granite dust treatments.</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <button class="close-btn" id="closeBtn" onclick="closeModal()">&times;</button>
+            <div class="modal-header">
+                <span id="modalIcon" style="font-size: 2rem">🧪</span>
+                <h3 class="modal-title" id="modalTitle">Analysis Breakdown</h3>
+            </div>
+            <div class="modal-section">
+                <h4 id="sectionHeader1">Context Importance</h4>
+                <p id="modalText1" style="color: var(--text-muted)"></p>
+            </div>
+            <div class="modal-section" id="section2Container">
+                <h4 id="sectionHeader2">Platform Mechanism</h4>
+                <p id="modalText2" style="color: var(--text-muted)"></p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <h2>Questions or Support Requirements?</h2>
+            <p>Connect with our lead systems research engineers for integration support or advice.</p>
+            <div class="team-links">
+                <span class="team-member" onclick="openTeamModal('Priyansh')">Priyansh</span>
+                <span class="team-member" onclick="openTeamModal('M.Rishika')">M.Rishika</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // SPA Routing Controller Logic
+        function switchPage(pageId) {
+            document.querySelectorAll('.app-page').forEach(page => page.classList.remove('active-page'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-nav'));
+            
+            const targetPage = document.getElementById(pageId + 'Page');
+            if (targetPage) {
+                targetPage.classList.add('active-page');
+            }
+            
+            if (['education', 'nitrogen', 'phosphorus', 'potassium'].includes(pageId)) {
+                document.querySelectorAll('.nav-btn')[2].classList.add('active-nav');
+            } else if (pageId === 'home') {
+                document.querySelectorAll('.nav-btn')[0].classList.add('active-nav');
+            } else if (pageId === 'analyzer') {
+                document.querySelectorAll('.nav-btn')[1].classList.add('active-nav');
+            }
+            window.scrollTo(0,0);
+        }
+
+        // Live Analyzer Real-time UI Label Management
+        function updateSliderLabel(type, val) {
+            if(type === 'ph') document.getElementById('phVal').textContent = val;
+            if(type === 'n') document.getElementById('nVal').textContent = val + " ppm";
+            if(type === 'p') document.getElementById('pVal').textContent = val + " ppm";
+        }
+
+        // Enhanced Analytical Simulator with Tools and Fertilizer Logic
+        function executeSoilDiagnostics() {
+            const ph = parseFloat(document.getElementById('phInput').value);
+            const n = parseInt(document.getElementById('nInput').value);
+            const p = parseInt(document.getElementById('pInput').value);
+
+            let phStatus = (ph < 6.0) ? 'Acidic' : (ph > 7.5) ? 'Alkaline' : 'Optimal';
+            let nClass = (n < 30) ? 'level-low' : (n > 80) ? 'level-high' : 'level-optimal';
+            let pClass = (p < 20) ? 'level-low' : (p > 60) ? 'level-high' : 'level-optimal';
+
+            const container = document.getElementById('resultsBox');
+            container.innerHTML = `
+                <h2>Diagnostic Report</h2>
+                
+                <div class="report-metric ${phStatus === 'Optimal' ? 'level-optimal' : 'level-high'}">
+                    <h4>Substrate Reaction: ${phStatus} Status (${ph})</h4>
+                    <p>${phStatus === 'Acidic' ? 'High proton acidity blocks phosphate solubility.' : phStatus === 'Alkaline' ? 'High calcium presence locks up critical micronutrient pathways.' : 'Excellent balance for nutrient fluid availability.'}</p>
+                    <div class="suggestion-section">
+                        <span class="suggestion-badge badge-tool">Required Equipment:</span>
+                        <span style="font-size:0.9rem; color:var(--text-dark); font-weight:500;">
+                            ${phStatus === 'Acidic' ? 'Rotary Drop Spreader (for uniform granular application)' : phStatus === 'Alkaline' ? 'Sub-surface Soil Injector or Liquid Sprayer' : 'Standard Maintenance Spreader'}
+                        </span>
+                        <br>
+                        <span class="suggestion-badge badge-input">Recommended input:</span>
+                        <span style="font-size:0.9rem; color:var(--text-dark); font-weight:500;">
+                            ${phStatus === 'Acidic' ? 'Agricultural Limestone (CaCO3) or Dolomite' : phStatus === 'Alkaline' ? 'Elemental Sulfur or Ammonium Sulfate amendments' : 'No pH adjustment inputs needed'}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="report-metric ${nClass}">
+                    <h4>Nitrogen Index: ${nClass.replace('level-', '').toUpperCase()}</h4>
+                    <p>${n < 30 ? 'Risk of leaf yellowing due to low protein production.' : n > 80 ? 'Excessive nitrogen causes weak stalks prone to bending.' : 'Optimal levels for healthy chlorophyll synthesis.'}</p>
+                    <div class="suggestion-section">
+                        <span class="suggestion-badge badge-tool">Required Equipment:</span>
+                        <span style="font-size:0.9rem; color:var(--text-dark); font-weight:500;">
+                            ${n < 30 ? 'Broadcast Granular Spreader or Side-Dress Applicator' : 'No input tools required (Monitor drainage)'}
+                        </span>
+                        <br>
+                        <span class="suggestion-badge badge-input">Recommended input:</span>
+                        <span style="font-size:0.9rem; color:var(--text-dark); font-weight:500;">
+                            ${n < 30 ? 'Synthetic Urea (46-0-0) or Organic Blood Meal for targeted absorption' : n > 80 ? 'Apply high-carbon mulch (sawdust) to naturally lock up excess nitrogen' : 'Maintain balance via regular crop rotations'}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="report-metric ${pClass}">
+                    <h4>Phosphorus Status: ${pClass.replace('level-', '').toUpperCase()}</h4>
+                    <p>${p < 20 ? 'Critical root stunting risk. Weak plant structural foundations.' : 'Safe storage levels found within standard target thresholds.'}</p>
+                    <div class="suggestion-section">
+                        <span class="suggestion-badge badge-tool">Required Equipment:</span>
+                        <span style="font-size:0.9rem; color:var(--text-dark); font-weight:500;">
+                            ${p < 20 ? 'Deep Banding Fertilizer Attachment (places nutrients directly in root pathways)' : 'Standard top-dress maintenance systems'}
+                        </span>
+                        <br>
+                        <span class="suggestion-badge badge-input">Recommended input:</span>
+                        <span style="font-size:0.9rem; color:var(--text-dark); font-weight:500;">
+                            ${p < 20 ? 'Triple Superphosphate (TSP) or Steamed Bone Meal for slow root integration' : 'No additional phosphorus adjustments required'}
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Modal Explanations Repository
+        const descriptiveRepo = {
+            nutrient: { icon: "🧪", t: "Nutrient Mapping Core", h1: "Value Importance", p1: "Determining macro availability values prevents chemical blind spots. Proper monitoring mitigates critical crop locking issues before visible foliage breakdown sets in.", h2: "System Tracking Logic", p2: "We map physical soil properties against calibrated reference models, determining localized ion deficiencies smoothly." },
+            fertilizer: { icon: "🌾", t: "Custom Chemical Prescriptions", h1: "Economic Drivers", p1: "Blind chemical application wastefully reduces profit margins. Matching application volume to local needs prevents surface runoff and topsoil toxification.", h2: "Algorithmic Delivery", p2: "Calculates total element discrepancies to prescribe granular mineral balance corrections smoothly." },
+            crop: { icon: "🌱", t: "Yield Strain Matching", h1: "Survival Drivers", p1: "Matching field parameters with crop chemistry profiles ensures optimal development conditions, directly reducing localized crop failures.", h2: "Processing Blueprint", p2: "Evaluates drainage capacities and nutrient indices against agronomic databases to find top matches." },
+            health: { icon: "📊", t: "Trend Line Tracking", h1: "System Stability", p1: "Soil health changes dynamically over time. Continuous monitoring helps trace depletion patterns before they trigger permanent structural soil collapse.", h2: "Data Lifecycle", p2: "Aggregates historical test profiles to surface degradation trends clearly through time-series tracking charts." }
+        };
+
+        // Modal Action Controllers
+        const overlay = document.getElementById('modalOverlay');
+
+        function openModal(key) {
+            const d = descriptiveRepo[key];
+            document.getElementById('modalIcon').textContent = d.icon;
+            document.getElementById('modalTitle').textContent = d.t;
+            document.getElementById('sectionHeader1').textContent = d.h1;
+            document.getElementById('modalText1').textContent = d.p1;
+            document.getElementById('section2Container').style.display = "block";
+            document.getElementById('sectionHeader2').textContent = d.h2;
+            document.getElementById('modalText2').textContent = d.p2;
+            overlay.classList.add('active');
+        }
+
+        function openTeamModal(name) {
+            document.getElementById('modalIcon').textContent = "✉️";
+            document.getElementById('modalTitle').textContent = name + " | Research Systems Support";
+            document.getElementById('sectionHeader1').textContent = "Secure Core Email Access";
+            document.getElementById('modalText1').innerHTML = `<div class="email-box">rathsaipriyansh@gmail.com</div>`;
+            document.getElementById('section2Container').style.display = "none";
+            overlay.classList.add('active');
+        }
+
+        function closeModal() { overlay.classList.remove('active'); }
+
+    </script>
+</body>
+</html>
